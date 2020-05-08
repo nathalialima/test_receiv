@@ -12,6 +12,7 @@ class Route{
     private static $methodNotAllowed = null;
 
     public static function add($expression, $function, $method = 'get'){
+
         array_push(self::$routes,Array(
             'expression' => $expression,
             'function' => $function,
