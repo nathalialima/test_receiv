@@ -41,6 +41,34 @@ class Model
         return $stmt->execute();
     }
 
+    public function find($fields = []){
+        $db=   new DbConnection();
+
+
+
+        $query = 'select * from '.$this->table;
+
+        $whereClause = '';
+        $whereConditions = [];
+
+        if (!empty($fields)) {
+
+            foreach ($fields as $key => $value) {
+                $whereConditions[] = '`'.$key.'` = "'.$value.'"';
+            }
+            $whereClause = " where ".implode(' AND ',$whereConditions);
+        }
+
+        $resultQuery = $query.$whereClause;
+        echo $resultQuery;
+        $stmt = $db->prepare($resultQuery);
+        $stmt->execute();
+        $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+        return $this->childrenArrayObject($result);
+
+    }
+
     public  function delete($id){
         $db=   new DbConnection();
         try {

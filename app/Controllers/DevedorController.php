@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Helpers\Messages;
 use App\Helpers\Response;
+use App\Helpers\Validations;
 use App\Helpers\View;
 use App\Models\Devedor;
 
@@ -21,8 +22,19 @@ class DevedorController
     }
 
     public function index(){
+        $array_consulta = [];
+        if (array_key_exists('nome', $_GET)){
+            if(!empty($_GET['nome'])) {
+                $array_consulta['nome'] = $_GET['nome'];
+            }
+        }
+        if (array_key_exists('cpf_cnpj', $_GET)){
+            if(!empty($_GET['cpf_cnpj'])) {
+                $array_consulta['cpf_cnpj'] = $_GET['cpf_cnpj'];
+            }
+        }
         $devedores = new Devedor();
-        $devedores = $devedores->findAll();
+        $devedores = $devedores->find($array_consulta);
         $view = new View('devedores/inicio');
         $view->render(compact('devedores'));
     }
@@ -34,7 +46,16 @@ class DevedorController
 
     public function createOrUpdate(){
         $now = new \DateTime('now');
-
+        $validation = new Validations();
+        $validation = $validation->validateCreateDevedor($_POST);
+        if ($validation['valido'] == false){
+            $this->message->messageError(" ".$validation['mensagem']);
+            if(array_key_exists('id', $_POST)){
+                $this->response->redirect($this->response->url("/edit/".$_POST['id']."/devedor"));
+            }else{
+                $this->response->redirect($this->response->url("/new"));
+            }
+        }
         $devedor = new Devedor();
         if(array_key_exists('id', $_POST)){
             $devedor->id = $_POST['id'];
@@ -48,7 +69,8 @@ class DevedorController
         $devedor->data_vencimento = $_POST['data_vencimento'];
         $devedor->updated = $now->format('Y-m-d H:i:m');
         $devedor->save();
-        $this->index();
+        $this->message->new("Cadastro incluido com sucesso");
+        $this->response->redirect("./");
     }
 
     public function delete($id){

@@ -1,7 +1,10 @@
 <?php
 require ('../vendor/autoload.php');
+require_once ('../app/configs/configs.php');
+
 use App\Controllers\DevedorController;
 use App\Helpers\Route;
+
 
 Route::add('/', function (){
     $controller = new DevedorController();
@@ -33,4 +36,4 @@ Route::add('/delete/([0-9]*)/devedor',function($id){
     $controller->delete($id);
 });
 
-Route::run('/teste_/public');
+Route::run(PATH);

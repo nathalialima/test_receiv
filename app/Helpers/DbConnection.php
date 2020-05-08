@@ -11,7 +11,7 @@ class DbConnection extends \PDO
     public function __construct() {
 
         try {
-            parent::__construct("mysql:host=mysql;dbname=teste_", "root","toor");
+            parent::__construct("mysql:host=".HOST.";dbname=".DB, USUARIO,SENHA);
             $this->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         } catch (\Exception $e) {
