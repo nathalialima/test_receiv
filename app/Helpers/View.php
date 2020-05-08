@@ -14,11 +14,13 @@ class View
     }
 
     public function render(Array $data = null){
+     ;
         if(file_exists(dirname(__FILE__)."/../../public/pages/".$this->page.".php")) {
 
 
             ob_start();
             if ($data != null) {
+
                 extract($data);
             }
             include(dirname(__FILE__) . "/../../public/pages/" . $this->page . ".php");

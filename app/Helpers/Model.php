@@ -41,21 +41,32 @@ class Model
         return $stmt->execute();
     }
 
+    public  function delete($id){
+        $db=   new DbConnection();
+        try {
+            $stmt = $db->prepare("delete from ".$this->table." where ".$this->pk." = :id ");
+            $stmt->execute(['id'=>$id]);
+            return true;
+        }catch (\Exception $e){
+            return false;
+        }
+    }
+
     public  function findById($id){
 
-        $db=   new DbConnection();
-      $stmt = $db->prepare("select * from ".$this->table." where ".$this->pk." = :id limit 1");
-      $stmt->execute(['id'=>$id]);
-      $result = $stmt->fetchObject();
-      return $this->childrenObject($result);
-    }
+    $db=   new DbConnection();
+    $stmt = $db->prepare("select * from ".$this->table." where ".$this->pk." = :id limit 1");
+    $stmt->execute(['id'=>$id]);
+    $result = $stmt->fetchObject();
+    return $this->childrenObject($result);
+}
 
 
     public function findAll(){
         $db= new DbConnection();
         $stmt = $db->prepare("select * from ".$this->table);
         $stmt->execute();
-        $result = $stmt->fetchObject();
+        $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
         return $this->childrenArrayObject($result);
     }
 
