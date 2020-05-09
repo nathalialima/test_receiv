@@ -4,6 +4,7 @@
 namespace App\Controllers;
 
 
+use App\Helpers\DateHelper;
 use App\Helpers\Messages;
 use App\Helpers\Response;
 use App\Helpers\Validations;
@@ -56,21 +57,27 @@ class DevedorController
                 $this->response->redirect($this->response->url("/new"));
             }
         }
+        $helper = new DateHelper();
         $devedor = new Devedor();
         if(array_key_exists('id', $_POST)){
             $devedor->id = $_POST['id'];
         }
         $devedor->nome = $_POST['nome'];
         $devedor->cpf_cnpj = $_POST['cpf_cnpj'];
-        $devedor->data_nascimento = $_POST['data_nascimento'];
+        $devedor->data_nascimento = $helper->formatDateToDB($_POST['data_nascimento']);
         $devedor->endereco = $_POST['endereco'];
         $devedor->descricao_titulo = $_POST['descricao_titulo'];
         $devedor->valor = $_POST['valor'];
-        $devedor->data_vencimento = $_POST['data_vencimento'];
+        $devedor->data_vencimento =$helper->formatDateToDB($_POST['data_vencimento']);
         $devedor->updated = $now->format('Y-m-d H:i:m');
-        $devedor->save();
-        $this->message->new("Cadastro incluido com sucesso");
-        $this->response->redirect("./");
+        if($devedor->save()){
+            $this->message->new("Cadastro incluido com sucesso");
+            $this->response->redirect("./");
+        }else{
+            $this->message->messageError("Erro ao realizar o cadastro");
+            $this->response->redirect("./");
+        }
+
     }
 
     public function delete($id){
@@ -81,8 +88,11 @@ class DevedorController
     }
 
     public function edit($id){
+        $helper = new DateHelper();
         $devedor = new Devedor();
         $devedor = $devedor->findById($id);
+        $devedor->data_vencimento = $helper->formatDateFromDB($devedor->data_vencimento);
+        $devedor->data_nascimento = $helper->formatDateFromDB($devedor->data_nascimento);
         $view = new View('devedores/editar');
         $view->render(compact('devedor'));
     }

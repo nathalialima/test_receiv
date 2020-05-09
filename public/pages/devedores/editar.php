@@ -61,7 +61,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label><b>Data de Nascimento:</b></label>
-                        <input class="form-control" type="text" name="data_nascimento" value="<?=$devedor->data_nascimento?>">
+                        <input class="form-control date" type="text" name="data_nascimento" value="<?=$devedor->data_nascimento?>">
                     </div>
                     <div class="col-md-6">
                         <label><b>Endereço:</b></label>
@@ -75,13 +75,13 @@
                     </div>
                     <div class="col-md-6">
                         <label><b>Valor:</b></label>
-                        <input class="form-control" type="text" name="valor" value="<?=$devedor->valor?>">
+                        <input class="form-control money" type="text" name="valor" value="<?=$devedor->valor?>">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <label><b>Data de Vencimento:</b></label>
-                        <input class="form-control" type="text" name="data_vencimento" value="<?=$devedor->data_vencimento?>">
+                        <input class="form-control date" type="text" name="data_vencimento" value="<?=$devedor->data_vencimento?>">
                     </div>
                 </div>
                 <br>
@@ -100,5 +100,12 @@
     </div>
 </div>
 <script src="../../dist/js/bootstrap.bundle.js" ></script>
-
+<script src="../../dist/js/jquery.min.js" ></script>
+<script src="../../dist/js/jquery.mask.min.js" ></script>
+<script>
+    $(document).ready(function() {
+        $('.date').mask('00/00/0000');
+        $('.money').mask('000.000.000.000.000.00', {reverse: true});
+    });
+</script>
 </body></html>

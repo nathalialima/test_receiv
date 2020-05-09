@@ -6,6 +6,13 @@ namespace App\Helpers;
 
 class Validations
 {
+    private $dateHelper;
+
+    public function __construct()
+    {
+        $this->dateHelper = new DateHelper();
+    }
+
     public function validateCreateDevedor($dado){
         $retorno = [
           'valido'=>true,
@@ -38,6 +45,18 @@ class Validations
         if (empty($dado['data_vencimento'])){
             $retorno['valido'] = false;
             $retorno['mensagem'] .= 'Data de Vencimento não preenchida <br>';
+        }
+        if(!empty($dado['data_vencimento'])){
+            if(!$this->dateHelper->checkValidateDate($dado['data_vencimento'])) {
+                $retorno['valido'] = false;
+                $retorno['mensagem'] .= 'Formato da data de vencimento é inválido <br>';
+            }
+        }
+        if(!empty($dado['data_nascimento'])){
+            if(!$this->dateHelper->checkValidateDate($dado['data_nascimento'])) {
+                $retorno['valido'] = false;
+                $retorno['mensagem'] .= 'Formato da data de nascimento é inválido <br>';
+            }
         }
         return $retorno;
     }

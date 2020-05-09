@@ -18,54 +18,55 @@ class Model
     }
 
     public function save(){
-        $propsToImplode = [];
-        $class = new \ReflectionClass($this);
+        try {
+            $propsToImplode = [];
+            $class = new \ReflectionClass($this);
 
-        foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $propertyName = $property->getName();
-            $propsToImplode[] = '`'.$propertyName.'` = "'.$this->{$propertyName}.'"';
+            foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+                $propertyName = $property->getName();
+                $propsToImplode[] = '`'.$propertyName.'` = "'.$this->{$propertyName}.'"';
+            }
+
+            $setClause = implode(',',$propsToImplode);
+            $sqlQuery = '';
+
+            if (array_key_exists($this->pk, $this)) {
+                $sqlQuery = 'UPDATE `'.$this->table.'` SET '.$setClause.' WHERE '.$this->pk.' = '.$this->{$this->pk};
+            } else {
+                $sqlQuery = 'INSERT INTO `'.$this->table.'` SET '.$setClause;
+            }
+            $db=   new DbConnection();
+            $stmt = $db->prepare($sqlQuery);
+            return $stmt->execute();
+        }catch (\Exception $e){
+            return false;
         }
-
-        $setClause = implode(',',$propsToImplode);
-        $sqlQuery = '';
-
-        if (array_key_exists($this->pk, $this)) {
-            $sqlQuery = 'UPDATE `'.$this->table.'` SET '.$setClause.' WHERE '.$this->pk.' = '.$this->{$this->pk};
-        } else {
-            $sqlQuery = 'INSERT INTO `'.$this->table.'` SET '.$setClause;
-        }
-
-
-        $db=   new DbConnection();
-        $stmt = $db->prepare($sqlQuery);
-        return $stmt->execute();
     }
 
     public function find($fields = []){
-        $db=   new DbConnection();
+        try {
+            $db=   new DbConnection();
+            $query = 'select * from '.$this->table;
+            $whereClause = '';
+            $whereConditions = [];
+            if (!empty($fields)) {
 
-
-
-        $query = 'select * from '.$this->table;
-
-        $whereClause = '';
-        $whereConditions = [];
-
-        if (!empty($fields)) {
-
-            foreach ($fields as $key => $value) {
-                $whereConditions[] = '`'.$key.'` = "'.$value.'"';
+                foreach ($fields as $key => $value) {
+                    $whereConditions[] = '`'.$key.'` = "'.$value.'"';
+                }
+                $whereClause = " where ".implode(' AND ',$whereConditions);
             }
-            $whereClause = " where ".implode(' AND ',$whereConditions);
+
+            $resultQuery = $query.$whereClause;
+            echo $resultQuery;
+            $stmt = $db->prepare($resultQuery);
+            $stmt->execute();
+            $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
+            return $this->childrenArrayObject($result);
+        }catch (\Exception $e){
+            return  [];
         }
-
-        $resultQuery = $query.$whereClause;
-        echo $resultQuery;
-        $stmt = $db->prepare($resultQuery);
-        $stmt->execute();
-        $result = $stmt->fetchAll(\PDO::FETCH_OBJ);
-
-        return $this->childrenArrayObject($result);
 
     }
 
@@ -81,13 +82,12 @@ class Model
     }
 
     public  function findById($id){
-
-    $db=   new DbConnection();
-    $stmt = $db->prepare("select * from ".$this->table." where ".$this->pk." = :id limit 1");
-    $stmt->execute(['id'=>$id]);
-    $result = $stmt->fetchObject();
-    return $this->childrenObject($result);
-}
+        $db=   new DbConnection();
+        $stmt = $db->prepare("select * from ".$this->table." where ".$this->pk." = :id limit 1");
+        $stmt->execute(['id'=>$id]);
+        $result = $stmt->fetchObject();
+        return $this->childrenObject($result);
+    }
 
 
     public function findAll(){
