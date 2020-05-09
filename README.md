@@ -7,7 +7,7 @@ O banco de dados utilizado na aplicação foi o mysql 5.7.
 Será necessário também o aplicativo composer, para poder gerar o autoload e instalar as dependências de teste.
 
 O servidor de aplicação deve suportar o mod rewrite, o mesmo é utilizado para a gestão de rotas e urls amigáveis.
-# Intruções
+# Instruções
 
 Rodar o sql que consta na pasta database, o mesmo irá criar a tabela e o banco de dados.
 
