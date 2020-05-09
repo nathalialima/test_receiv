@@ -90,7 +90,7 @@
                             <td><?=$dateHelper->formatDateFromDB($devedor->data_vencimento)?></td>
                             <td><a href="./view/<?=$devedor->id?>/devedor" class="btn btn-info">Visualizar</a>
                                 <a href="./edit/<?=$devedor->id?>/devedor" class="btn btn-info">Editar</a>
-                                <a href="./delete/<?=$devedor->id?>/devedor" class="btn btn-danger">Excluir</a> </td>
+                                <a  href="./delete/<?=$devedor->id?>/devedor"  class="btn btn-danger" onclick="return confirm('Tem certeza que quer excluir esse cadastro?');">Excluir</a> </td>
                         </tr>
                         <?php
                     }

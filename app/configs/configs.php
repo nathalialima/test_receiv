@@ -1,6 +1,6 @@
 <?php
 
-define("PATH",'/teste_/public');
+define("PATH",'/public');
 define("HOST",'mysql');
 define("DB",'teste_');
 define("USUARIO",'root');
